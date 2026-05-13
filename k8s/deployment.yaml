@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-health-api
+  labels:
+    app: server-health-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: server-health-api
+  template:
+    metadata:
+      labels:
+        app: server-health-api
+    spec:
+      containers:
+        - name: server-health-api
+          image: hvardhan21/server-health-api:latest
+          ports:
+            - containerPort: 8000
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "100m"
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 15
+            periodSeconds: 20
